@@ -36,9 +36,9 @@ picocom -b 115200 /dev/ttyACM0
 
 ## 预期现象
 
-- 红色 LED 点亮约 500 ms 后熄灭。
-- 绿色 LED 点亮约 500 ms 后熄灭。
-- 蓝色 LED 点亮约 500 ms 后熄灭。
+- 红色 LED 点亮约 100 ms 后熄灭。
+- 绿色 LED 点亮约 100 ms 后熄灭。
+- 蓝色 LED 点亮约 100 ms 后熄灭。
 - 串口循环输出：
 
 ```text
@@ -46,3 +46,13 @@ LED: red
 LED: green
 LED: blue
 ```
+
+## 本课记录
+
+- 已在 Rocket-Pi 上完成构建和烧录验证。
+- 当前固件产物位于 west workspace 的
+  `build/rocketpi_01_blinky/zephyr/zephyr.hex` 和
+  `build/rocketpi_01_blinky/zephyr/zephyr.bin`。
+- Windows 工具烧录时优先使用 `zephyr.hex`；如果使用 `zephyr.bin`，起始地址为
+  `0x08000000`。
+- 串口验证输出为 `LED: red`、`LED: green`、`LED: blue` 循环打印。

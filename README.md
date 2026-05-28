@@ -46,6 +46,15 @@ Rocket-Pi 当前控制台使用 USART2，波特率为 115200。
 picocom -b 115200 /dev/ttyACM0
 ```
 
+## 学习进度
+
+| 课程 | 状态 | 重点 | 记录 |
+| --- | --- | --- | --- |
+| `01_blinky` | 已上板验证 | GPIO、Devicetree alias、串口 `printk()` | RGB LED 按红、绿、蓝循环点亮，当前点亮时间为 100 ms。 |
+
+下一课建议学习按键输入：先用轮询读取 GPIO input，再升级到 GPIO interrupt。
+这样可以把本课的 Devicetree/GPIO 输出知识自然扩展到输入和中断。
+
 ## 学习建议
 
 每一课按以下顺序学习：

@@ -10,7 +10,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
 
-#define LED_ON_TIME_MS (500U)
+#define LED_ON_TIME_MS (100U)
 
 static const struct gpio_dt_spec leds[] = {
 	GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios),

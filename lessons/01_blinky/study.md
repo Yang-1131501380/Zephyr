@@ -85,6 +85,15 @@ Rocket-Pi 的 LED 在 Devicetree 中配置为 `GPIO_ACTIVE_LOW`，所以
 
 ## 课后练习
 
-1. 把 `LED_ON_TIME_MS` 从 500 改成 100，观察闪烁速度变化。
+1. 把 `LED_ON_TIME_MS` 从 100 改成 500，观察闪烁速度变化。
 2. 同时调整 `leds` 和 `led_names` 的顺序，让 LED 按蓝、绿、红闪烁。
 3. 在每个 LED 熄灭后增加一个短暂延时，观察显示效果是否更清楚。
+
+## 下一课方向
+
+建议下一课做按键输入。学习顺序可以是：
+
+1. 在 `rocket_pi.dts` 中确认或补充按键 GPIO 节点和 alias。
+2. 用 `GPIO_INPUT` 配置按键引脚，先通过轮询读取按键状态。
+3. 再加入 GPIO interrupt，理解 Zephyr 的 `gpio_callback`。
+4. 最后用按键控制本课的 RGB LED，例如按一次切换颜色。
