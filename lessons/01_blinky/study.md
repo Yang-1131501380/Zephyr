@@ -65,14 +65,20 @@ aliases {
 
 - `gpio_is_ready_dt()`：确认 GPIO 控制器已经可用。
 - `gpio_pin_configure_dt()`：把 LED 引脚配置为输出。
-- `gpio_pin_set_dt()`：设置输出电平，控制 LED 亮灭。
+- `gpio_pin_set_dt()`：设置 GPIO 逻辑状态，控制 LED 亮灭。
 
 `gpio_dt_spec` 是从 Devicetree 生成的 GPIO 描述，里面包含 GPIO 控制器、
 引脚编号和有效电平等信息。
 
+Rocket-Pi 的 LED 在 Devicetree 中配置为 `GPIO_ACTIVE_LOW`，所以
+`gpio_pin_set_dt(..., 1)` 表示把 LED 设置为“有效状态”，实际物理电平
+可能是低电平。学习 Zephyr 时要优先理解“逻辑状态”，不要简单认为 `1`
+永远等于物理高电平。
+
 ## 常见问题
 
-- 构建提示找不到 `rocket_pi`：检查 `BOARD_ROOT` 是否指向仓库根目录。
+- 构建提示找不到 `rocket_pi`：检查 `BOARD_ROOT` 是否指向包含 `boards/`
+  的应用根目录。
 - 串口无输出：确认串口号、115200 波特率、USB 连接和板子复位。
 - LED 不亮：确认 `rocket_pi.dts` 中 LED 引脚和硬件原理图一致。
 - 亮灭逻辑反了：检查 LED 是否为 `GPIO_ACTIVE_LOW`。
@@ -80,5 +86,5 @@ aliases {
 ## 课后练习
 
 1. 把 `LED_ON_TIME_MS` 从 500 改成 100，观察闪烁速度变化。
-2. 修改 `led_names` 的顺序，并观察串口输出是否变化。
-3. 修改 `while` 循环中的顺序，让 LED 按蓝、绿、红闪烁。
+2. 同时调整 `leds` 和 `led_names` 的顺序，让 LED 按蓝、绿、红闪烁。
+3. 在每个 LED 熄灭后增加一个短暂延时，观察显示效果是否更清楚。

@@ -7,6 +7,7 @@
 
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
 
 #define LED_ON_TIME_MS (500U)
