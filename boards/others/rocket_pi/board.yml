@@ -1,0 +1,6 @@
+board:
+  name: rocket_pi
+  full_name: Rocket-Pi STM32F401RE
+  vendor: others
+  socs:
+    - name: stm32f401xe

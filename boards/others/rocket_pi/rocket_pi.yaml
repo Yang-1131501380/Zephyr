@@ -1,0 +1,13 @@
+identifier: rocket_pi
+name: Rocket-Pi STM32F401RE
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+supported:
+  - gpio
+  - uart
+ram: 96
+flash: 512
+vendor: others
