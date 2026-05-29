@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+
+cmake_minimum_required(VERSION 3.20.0)
+
+get_filename_component(APP_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
+list(APPEND BOARD_ROOT ${APP_ROOT})
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(lesson_09_threads_led)
+
+target_sources(app PRIVATE src/main.c)

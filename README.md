@@ -24,6 +24,10 @@ lessons/                     # Zephyr 学习课程
   04_devicetree_overlay/     # 第四课：应用级 Devicetree overlay
   05_kconfig_prjconf/        # 第五课：Kconfig 和 prj.conf
   06_printk_logging/         # 第六课：printk 和 logging
+  07_uart_echo/              # 第七课：UART polling 回显
+  08_shell_led_control/      # 第八课：Shell 控制 RGB LED
+  09_threads_led/            # 第九课：多线程 LED
+  10_timer_workqueue/        # 第十课：timer 和 workqueue
   _template/                 # 新课程模板
 ```
 
@@ -71,6 +75,10 @@ picocom -b 115200 /dev/ttyACM0
 | `04_devicetree_overlay` | 已烧录并串口验证 | DTS、overlay、alias、chosen、生成后的 `zephyr.dts` | 使用本课 `app.overlay` 将 lesson LED 指向红灯，按键控制 LED。 |
 | `05_kconfig_prjconf` | 已烧录并串口验证 | `prj.conf`、Kconfig、`CONFIG_*`、`IS_ENABLED()` | 使用 lesson 自定义 Kconfig 控制 LED 闪烁周期、按键门控和计数日志。 |
 | `06_printk_logging` | 已烧录并串口验证 | `printk()`、logging、日志等级、UART 后端 | 使用绿色 LED 心跳，对比 `printk()` 和 `LOG_INF/WRN/DBG` 串口输出。 |
+| `07_uart_echo` | 已构建，待烧录验证 | UART polling、console UART、回显 | 使用 `uart_poll_in/out()` 在 USART2 上回显电脑输入。 |
+| `08_shell_led_control` | 已构建，待烧录验证 | Zephyr Shell、命令注册、参数解析 | 串口 shell 命令控制 RGB LED。 |
+| `09_threads_led` | 已构建，待烧录验证 | thread、priority、stack、`K_THREAD_DEFINE` | 三个线程分别按不同周期控制 RGB LED。 |
+| `10_timer_workqueue` | 已构建，待烧录验证 | `k_timer`、`k_work`、workqueue | timer 周期提交 work，work 中翻转蓝色 LED 并打印。 |
 
 学习路线采用“双轨”：
 
