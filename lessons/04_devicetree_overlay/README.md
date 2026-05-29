@@ -3,7 +3,7 @@
 本课学习 Zephyr 应用级 devicetree overlay。示例不修改全局
 `rocket_pi.dts`，只在本 lesson 的 `app.overlay` 中新增课程专用
 `lesson-led`、`lesson-button` alias 和 `zephyr,lesson-*` chosen 节点。
-应用代码通过这些名字选择蓝色 LED 和 PA0 用户按键。
+应用代码通过这些名字选择红色 LED 和 PA0 用户按键。
 
 ## 参考资料
 
@@ -26,7 +26,7 @@
 
 | 功能 | Zephyr 节点或 alias | 引脚/外设 | 说明 |
 | --- | --- | --- | --- |
-| 本课 LED | `lesson-led` / `zephyr,lesson-led` | PB14 | overlay 指向 `blue_led`，低电平有效 |
+| 本课 LED | `lesson-led` / `zephyr,lesson-led` | PA1 | overlay 指向 `red_led`，低电平有效 |
 | 本课按键 | `lesson-button` / `zephyr,lesson-button` | PA0 | overlay 指向 `user_button`，高电平有效 |
 | 调试串口 | `zephyr,console` / `&usart2` | PA2 TX, PA3 RX | 115200 baud |
 
@@ -83,15 +83,15 @@ picocom -b 115200 /dev/ttyACM0
 ## 预期现象
 
 - 上电后串口打印课程名、本课 alias 解析到的 GPIO 端口、引脚和 label。
-- 按下 PA0 用户按键：蓝色 LED 点亮。
-- 松开 PA0 用户按键：蓝色 LED 熄灭。
+- 按下 PA0 用户按键：红色 LED 点亮。
+- 松开 PA0 用户按键：红色 LED 熄灭。
 - 串口只在轮询到按键状态变化时打印。
 
 参考串口输出：
 
 ```text
 Lesson 04: devicetree overlay
-lesson-led: GPIOB pin 14, active low
+lesson-led: GPIOA pin 1, active low
 lesson-button: GPIOA pin 0, active high
 Overlay selected LED label: Lesson 04 overlay LED
 Overlay selected button label: Lesson 04 overlay button
@@ -118,16 +118,16 @@ build/rocketpi_04_devicetree_overlay/zephyr/zephyr.bin
 - 2026-05-29 已通过 OpenOCD 写入
   `build/rocketpi_04_devicetree_overlay/zephyr/zephyr.hex`。
 - 2026-05-29 已通过 `/dev/ttyACM0` 串口验证启动日志，确认 overlay
-  选中的 LED 为 `gpio@40020400 pin 14`，按键为 `gpio@40020000 pin 0`。
+  选中的 LED 为 `gpio@40020000 pin 1`，按键为 `gpio@40020000 pin 0`。
 
 ## 常见问题
 
 - 构建时报 `lesson-led alias is missing`：确认 `app.overlay` 文件名在
   lesson 根目录，Zephyr 默认会自动合并它。
 - 串口 label 不是本课文字：确认本课 build 目录已用 `-p always` 重新构建。
-- LED 没反应：确认 overlay 指向的是 `blue_led`，蓝色 LED 为低电平有效，
+- LED 没反应：确认 overlay 指向的是 `red_led`，红色 LED 为低电平有效，
   应用应通过 `gpio_pin_set_dt()` 写逻辑状态。
-- 想改用红灯或绿灯：只改 `app.overlay` 中的 `&blue_led` 为 `&red_led`
+- 想改用蓝灯或绿灯：只改 `app.overlay` 中的 `&red_led` 为 `&blue_led`
   或 `&green_led`，应用 C 代码不需要改。
 
 ## 下一课

@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: Apache-2.0
+
+source "Kconfig.zephyr"
+
+menu "Lesson 06 logging options"
+
+config LESSON_06_LOG_LEVEL
+	int "Lesson 06 module log level"
+	default 4
+	range 0 4
+	help
+	  Log level used by LOG_MODULE_REGISTER(). 0 disables this module's
+	  logging, 1 enables errors, 2 warnings, 3 information and 4 debug.
+
+config LESSON_06_HEARTBEAT_INTERVAL_MS
+	int "Heartbeat interval in milliseconds"
+	default 1000
+	range 100 5000
+	help
+	  Time between heartbeat LED toggles and log output.
+
+endmenu

@@ -22,6 +22,8 @@ lessons/                     # Zephyr 学习课程
   02_button_polling/         # 第二课：按键轮询输入
   03_button_interrupt/       # 第三课：按键 GPIO 中断
   04_devicetree_overlay/     # 第四课：应用级 Devicetree overlay
+  05_kconfig_prjconf/        # 第五课：Kconfig 和 prj.conf
+  06_printk_logging/         # 第六课：printk 和 logging
   _template/                 # 新课程模板
 ```
 
@@ -66,7 +68,9 @@ picocom -b 115200 /dev/ttyACM0
 | `01_blinky` | 已上板验证 | GPIO、Devicetree alias、串口 `printk()` | RGB LED 按红、绿、蓝循环点亮，当前点亮时间为 100 ms。 |
 | `02_button_polling` | 已烧录，待串口验证 | GPIO input、按键有效电平、轮询 | 使用 PA0 用户按键控制 LED，并打印按键状态变化。 |
 | `03_button_interrupt` | 已烧录，待串口验证 | GPIO interrupt、callback、workqueue 消抖 | 使用 PA0 双边沿中断触发延时 work，再读取稳定按键状态。 |
-| `04_devicetree_overlay` | 已烧录并串口验证 | DTS、overlay、alias、chosen、生成后的 `zephyr.dts` | 使用本课 `app.overlay` 将 lesson LED 指向蓝灯，按键控制 LED。 |
+| `04_devicetree_overlay` | 已烧录并串口验证 | DTS、overlay、alias、chosen、生成后的 `zephyr.dts` | 使用本课 `app.overlay` 将 lesson LED 指向红灯，按键控制 LED。 |
+| `05_kconfig_prjconf` | 已烧录并串口验证 | `prj.conf`、Kconfig、`CONFIG_*`、`IS_ENABLED()` | 使用 lesson 自定义 Kconfig 控制 LED 闪烁周期、按键门控和计数日志。 |
+| `06_printk_logging` | 已烧录并串口验证 | `printk()`、logging、日志等级、UART 后端 | 使用绿色 LED 心跳，对比 `printk()` 和 `LOG_INF/WRN/DBG` 串口输出。 |
 
 学习路线采用“双轨”：
 

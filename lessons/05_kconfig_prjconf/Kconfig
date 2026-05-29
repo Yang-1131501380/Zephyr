@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0
+
+source "Kconfig.zephyr"
+
+menu "Lesson 05 Kconfig options"
+
+config LESSON_05_BLINK_INTERVAL_MS
+	int "LED blink interval in milliseconds"
+	default 300
+	range 50 2000
+	help
+	  Time between LED state changes. Change this from prj.conf or
+	  menuconfig to see how Kconfig values become CONFIG_* macros.
+
+config LESSON_05_USE_BUTTON_GATE
+	bool "Only blink while the user button is pressed"
+	default y
+	help
+	  When enabled, the PA0 user button gates the LED blink loop. When
+	  disabled, the application builds without the button read path.
+
+config LESSON_05_PRINT_COUNTER
+	bool "Print a counter on every LED state change"
+	default y
+	help
+	  Enables a small printk() trace that proves this feature is compiled
+	  in or out by Kconfig.
+
+endmenu

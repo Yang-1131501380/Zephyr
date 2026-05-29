@@ -9,17 +9,17 @@
 
 / {
 	chosen {
-		zephyr,lesson-led = &blue_led;
+		zephyr,lesson-led = &red_led;
 		zephyr,lesson-button = &user_button;
 	};
 
 	aliases {
-		lesson-led = &blue_led;
+		lesson-led = &red_led;
 		lesson-button = &user_button;
 	};
 };
 
-&blue_led {
+&red_led {
 	label = "Lesson 04 overlay LED";
 };
 
