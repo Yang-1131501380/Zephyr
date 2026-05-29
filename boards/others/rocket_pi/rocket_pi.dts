@@ -5,6 +5,13 @@
 /dts-v1/;
 #include <st/f4/stm32f401Xe.dtsi>
 #include <st/f4/stm32f401r(d-e)tx-pinctrl.dtsi>
+#include "arduino_r3_connector.dtsi"
+#include "st_morpho_connector.dtsi"
+#include <zephyr/dt-bindings/display/panel.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/led/led.h>
+#include <zephyr/dt-bindings/mipi_dbi/mipi_dbi.h>
+#include <zephyr/dt-bindings/pwm/pwm.h>
 
 / {
 	model = "Rocket-Pi STM32F401RE";
@@ -15,9 +22,10 @@
 		zephyr,shell-uart = &usart2;
 		zephyr,sram = &sram0;
 		zephyr,flash = &flash0;
+		zephyr,display = &st7789v;
 	};
 
-	leds {
+	leds: leds {
 		compatible = "gpio-leds";
 
 		red_led: led_0 {
@@ -36,10 +44,112 @@
 		};
 	};
 
+	gpio_keys {
+		compatible = "gpio-keys";
+
+		user_button: button {
+			label = "User";
+			gpios = <&gpioa 0 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	backlight {
+		compatible = "gpio-leds";
+		status = "okay";
+
+		lcd_bl: lcd_bl {
+			gpios = <&gpiob 5 GPIO_ACTIVE_HIGH>;
+			label = "lcd_bl";
+		};
+	};
+
+	mipi_dbi_st7789 {
+		compatible = "zephyr,mipi-dbi-spi";
+		status = "okay";
+		dc-gpios = <&gpioc 3 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpioc 1 GPIO_ACTIVE_LOW>;
+		spi-dev = <&spi1>;
+		write-only;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		st7789v: st7789v@0 {
+			compatible = "sitronix,st7789v";
+			status = "okay";
+			reg = <0>;
+			mipi-max-frequency = <20000000>;
+			width = <240>;
+			height = <240>;
+			pixel-format = <PANEL_PIXEL_FORMAT_RGB_565>;
+			x-offset = <0>;
+			y-offset = <0>;
+			supply-gpios = <&gpiob 5 GPIO_ACTIVE_HIGH>;
+			vcom = <0x19>;
+			gctrl = <0x35>;
+			vrhs = <0x12>;
+			vdvs = <0x20>;
+			mdac = <0x00>;
+			gamma = <0x01>;
+			lcm = <0x2c>;
+			porch-param = [0c 0c 00 33 33];
+			cmd2en-param = [5a 69 02 01];
+			pwctrl1-param = [a4 a1];
+			pvgam-param = [d0 04 0d 11 13 2b 3f 54 4c
+					18 0d 0b 1f 23];
+			nvgam-param = [d0 04 0c 11 13 2c 3f 44 51
+					2f 1f 1f 20 23];
+			ram-param = [00 f0];
+			rgb-param = [cd 08 14];
+			mipi-mode = "MIPI_DBI_MODE_SPI_4WIRE";
+		};
+	};
+
+	hcsr04_0: hcsr04 {
+		compatible = "hc-sr04";
+		trigger-gpios = <&gpioc 10 GPIO_ACTIVE_HIGH>;
+		echo-gpios = <&gpioc 11
+			      (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		status = "okay";
+	};
+
+	pwmleds {
+		compatible = "pwm-leds";
+
+		buzzer_pwm: buzzer_pwm {
+			pwms = <&pwm3 3 PWM_HZ(2700) PWM_POLARITY_NORMAL>;
+			label = "Passive Buzzer";
+		};
+
+		sg90_pwm: sg90_pwm {
+			pwms = <&pwm3 4 PWM_HZ(50) PWM_POLARITY_NORMAL>;
+			label = "sg90";
+		};
+	};
+
+	at24_soft_i2c: at24_soft_i2c {
+		compatible = "zephyr,i2c-bitbang";
+		status = "okay";
+		scl-gpios = <&gpioc 14 GPIO_ACTIVE_HIGH>;
+		sda-gpios = <&gpioc 15 GPIO_ACTIVE_HIGH>;
+	};
+
 	aliases {
 		led0 = &red_led;
 		led1 = &green_led;
 		led2 = &blue_led;
+		sw0 = &user_button;
+		watchdog0 = &wwdg;
+		die-temp0 = &die_temp;
+		volt-sensor0 = &vref;
+		volt-sensor1 = &vbat;
+		bl0 = &lcd_bl;
+		sdhc0 = &sdmmc1;
+		i2s-tx = &i2s2;
+		hcsr04 = &hcsr04_0;
+		buzzer0 = &buzzer_pwm;
+		servo0 = &sg90_pwm;
+		wifi0 = &esp8266;
 	};
 };
 
@@ -74,6 +184,118 @@
 	pinctrl-names = "default";
 	current-speed = <115200>;
 	status = "okay";
+	label = "debug_uart";
+};
+
+&usart1 {
+	pinctrl-0 = <&usart1_tx_pa9 &usart1_rx_pa10>;
+	pinctrl-names = "default";
+	current-speed = <9600>;
+	status = "disabled";
+	label = "radar_uart";
+};
+
+&usart6 {
+	pinctrl-0 = <&usart6_tx_pc6 &usart6_rx_pc7>;
+	pinctrl-names = "default";
+	current-speed = <115200>;
+	status = "okay";
+
+	esp8266: wifi {
+		compatible = "espressif,esp-at";
+		status = "okay";
+	};
+};
+
+&timers1 {
+	status = "okay";
+	st,prescaler = <0>;
+
+	pwm1: pwm {
+		status = "okay";
+		pinctrl-0 = <&tim1_ch3n_pb1>;
+		pinctrl-names = "default";
+		label = "pb1_ws2812b";
+	};
+};
+
+&timers3 {
+	status = "okay";
+	st,prescaler = <83>;
+
+	pwm3: pwm {
+		status = "okay";
+		pinctrl-0 = <&tim3_ch3_pb0 &tim3_ch4_pc9>;
+		pinctrl-names = "default";
+		label = "pb0_buzzer_pc9_sg90";
+	};
+};
+
+&timers4 {
+	status = "okay";
+	st,prescaler = <83>;
+
+	pwm4: pwm {
+		status = "okay";
+		pinctrl-0 = <&tim4_ch1_pb6 &tim4_ch2_pb7>;
+		pinctrl-names = "default";
+		label = "l9110_pwm";
+	};
+};
+
+&spi1 {
+	status = "okay";
+	pinctrl-0 = <&spi1_sck_pa5 &spi1_mosi_pa7>;
+	pinctrl-names = "default";
+	cs-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
+	label = "st7789v_spi";
+};
+
+&i2c1 {
+	pinctrl-0 = <&i2c1_scl_pb8 &i2c1_sda_pb9>;
+	pinctrl-names = "default";
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_FAST>;
+	label = "aht30";
+};
+
+&spi2 {
+	pinctrl-0 = <&spi2_sck_pb13 &spi2_miso_pc2 &spi2_mosi_pb15>;
+	pinctrl-names = "default";
+	cs-gpios = <&gpiob 12 GPIO_ACTIVE_LOW>;
+	status = "okay";
+
+	w25q64_spi: spi-nor-flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <40000000>;
+		size = <DT_SIZE_M(64)>;
+		status = "okay";
+		jedec-id = [ef 40 17];
+		has-dpd;
+		t-enter-dpd = <3500>;
+		t-exit-dpd = <3500>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			spi_storage_partition: partition@0 {
+				label = "storage_spi";
+				reg = <0x00000000 DT_SIZE_M(8)>;
+			};
+		};
+	};
+};
+
+&adc1 {
+	status = "okay";
+	pinctrl-0 = <&adc1_in14_pc4 &adc1_in15_pc5>;
+	pinctrl-names = "default";
+	st,adc-clock-source = "SYNC";
+	st,adc-prescaler = <2>;
+	label = "adc1_joystick";
 };
 
 &flash0 {
@@ -103,4 +325,64 @@
 			reg = <0x00060000 DT_SIZE_K(128)>;
 		};
 	};
+};
+
+&die_temp {
+	status = "okay";
+};
+
+&wwdg {
+	status = "okay";
+};
+
+&vref {
+	status = "okay";
+};
+
+&vbat {
+	status = "okay";
+};
+
+&sdmmc1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdio_d0_pc8 &sdio_ck_pc12 &sdio_cmd_pd2>;
+	bus-width = <1>;
+	cd-gpios = <&gpioc 0 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+	disk-name = "SD";
+	resets;
+	clk-div = <4>;
+};
+
+zephyr_udc0: &usbotg_fs {
+	pinctrl-0 = <&usb_otg_fs_dm_pa11 &usb_otg_fs_dp_pa12>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+		label = "Zephyr USB CDC-ACM";
+	};
+};
+
+&plli2s {
+	div-m = <4>;
+	mul-n = <128>;
+	div-r = <5>;
+	clocks = <&clk_hse>;
+	status = "disabled";
+};
+
+&i2s2 {
+	pinctrl-0 = <&i2s2_ws_pb12 &i2s2_ck_pb13 &i2s2_sd_pb15>;
+	pinctrl-names = "default";
+	status = "disabled";
+};
+
+&dma1 {
+	status = "okay";
+};
+
+&dma2 {
+	status = "okay";
 };

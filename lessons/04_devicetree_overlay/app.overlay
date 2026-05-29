@@ -1,0 +1,28 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Lesson-local devicetree overlay.
+ *
+ * This file is applied only when building this lesson. It adds lesson-specific
+ * names for existing board hardware without changing rocket_pi.dts.
+ */
+
+/ {
+	chosen {
+		zephyr,lesson-led = &blue_led;
+		zephyr,lesson-button = &user_button;
+	};
+
+	aliases {
+		lesson-led = &blue_led;
+		lesson-button = &user_button;
+	};
+};
+
+&blue_led {
+	label = "Lesson 04 overlay LED";
+};
+
+&user_button {
+	label = "Lesson 04 overlay button";
+};
